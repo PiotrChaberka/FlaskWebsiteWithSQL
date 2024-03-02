@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Registered Users{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card shadow-lg">
+        <div class="card-header bg-purple text-white text-center">
+          <h1>Registered Users</h1>
+        </div>
+        <div class="card-body">
+          <div class="input-group mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search users..." onkeyup="searchUsers()">
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fa fa-search"></i></span>
+            </div>
+          </div>
+          <ul class="list-group list-group-flush" id="userList">
+            {% for user in users %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ user.first_name }}</strong> 
+                <span class="text-muted">({{ user.email }})</span>
+              </div>
+              <div>
+                <button class="btn btn-outline-primary btn-sm mr-2" onclick="editUser('{{ user.id }}')">Edit</button>
+                <button class="btn btn-outline-danger btn-sm" onclick="deleteUser('{{ user.id }}')">Delete</button>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function searchUsers() {
+    var input, filter, userList, userItems, i, txtValue;
+    input = document.getElementById('searchInput');
+    filter = input.value.toLowerCase();
+    userList = document.getElementById('userList');
+    userItems = userList.getElementsByTagName('li');
+    
+    for (i = 0; i < userItems.length; i++) {
+      txtValue = userItems[i].textContent || userItems[i].innerText;
+      if (txtValue.toLowerCase().indexOf(filter) > -1) {
+        userItems[i].style.display = "";
+      } else {
+        userItems[i].style.display = "none";
+      }
+    }
+  }
+
+  function editUser(userId) {
+    // Fetch user details by userId (e.g., from your backend API)
+    getUserDetails(userId)
+      .then((user) => {
+        if (userEmailIsRestricted(user.email)) {
+          console.log("Cannot edit user with ID:", userId);
+          alert("Editing is restricted for this user.");
+        } else {
+          console.log("Edit user with ID:", userId);
+          // Implement your edit logic here
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user details:", error);
+      });
+  }
+
+  function deleteUser(userId) {
+    // Fetch user details by userId (e.g., from your backend API)
+    getUserDetails(userId)
+      .then((user) => {
+        if (userEmailIsRestricted(user.email)) {
+          console.log("Cannot delete user with ID:", userId);
+          alert("Deletion is restricted for this user.");
+        } else {
+          console.log("Delete user with ID:", userId);
+          // Implement your delete logic here
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user details:", error);
+      });
+  }
+
+  async function getUserDetails(userId) {
+    // Replace with your actual API call to fetch user details by userId
+    // Example using fetch:
+    try {
+      const response = await fetch(`/api/users/${userId}`); // Adjust the API endpoint
+      if (!response.ok) {
+        throw new Error("Failed to fetch user details");
+      }
+      const user = await response.json();
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  function userEmailIsRestricted(email) {
+    // Replace with your actual logic to check if the user's email is restricted
+    // For example:
+    const restrictedEmail = "piotr5wwwwwz@gmail.com";
+    return email === restrictedEmail;
+  }
+</script>
+
+<style>
+  .card-header.bg-purple {
+    background-color: #6f42c1;
+    color: white;
+  }
+
+  .card {
+    border-radius: 10px;
+  }
+
+  .list-group-item {
+    border: none;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .list-group-item:last-child {
+    border-bottom: none;
+  }
+
+  .btn-outline-primary {
+    border-color: #6f42c1;
+    color: #6f42c1;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #6f42c1;
+    color: white;
+  }
+
+  .btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+
+  .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .input-group .form-control {
+    border-right: 0;
+  }
+
+  .input-group .input-group-append .input-group-text {
+    background: white;
+    border-left: 0;
+  }
+</style>
+{% endblock %}

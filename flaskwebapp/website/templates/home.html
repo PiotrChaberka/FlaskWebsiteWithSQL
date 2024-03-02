@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Notes</h1>
+
+<div class="search-bar text-center mb-4">
+  <input type="text" id="searchInput" class="form-control" placeholder="Search notes..." onkeyup="searchNotes()">
+</div>
+
+<div class="note-board row">
+  {% for note in user.notes %}
+  <div class="note-item col-md-4 mb-3">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-text">{{ note.data }}</p>
+        <button type="button" class="close" onClick="deleteNote({{ note.id }})">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<form method="POST" class="mt-4">
+  <div class="form-group">
+    <textarea name="note" id="note" class="form-control" rows="3" placeholder="Write your note here..."></textarea>
+  </div>
+  <div class="text-center">
+    <button type="submit" class="btn btn-purple">Add Note</button>
+  </div>
+</form>
+
+<script>
+  function deleteNote(noteId) {
+    // Implement the logic to delete the note by noteId
+  }
+
+  function searchNotes() {
+    var input, filter, notes, noteText, i, txtValue;
+    input = document.getElementById('searchInput');
+    filter = input.value.toLowerCase();
+    notes = document.getElementsByClassName('note-item');
+    
+    for (i = 0; i < notes.length; i++) {
+      noteText = notes[i].getElementsByClassName('card-text')[0];
+      if (noteText) {
+        txtValue = noteText.textContent || noteText.innerText;
+        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+          notes[i].style.display = "";
+        } else {
+          notes[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  .note-board {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .note-item {
+    padding: 10px;
+  }
+  .card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+  }
+  .card-text {
+    margin-bottom: 1rem;
+  }
+  .btn-purple {
+    background-color: #6f42c1;
+    color: white;
+  }
+  .btn-purple:hover {
+    background-color: #563d7c;
+  }
+  .search-bar {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .form-control {
+    width: 100%;
+  }
+</style>
+{% endblock %}
